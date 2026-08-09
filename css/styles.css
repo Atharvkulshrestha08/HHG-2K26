@@ -307,6 +307,34 @@ input {
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
 }
 
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 8px 18px 8px 12px;
+  background: var(--pink);
+  border: 2px solid var(--black);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 -1px rgba(0, 0, 0, 0.9);
+}
+
+.hero-tag-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--baby);
+}
+
+.hero-tag-hash {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
 .hero-chips {
   display: flex;
   flex-wrap: wrap;
@@ -774,6 +802,11 @@ input {
 .footer-links a { color: var(--gold); }
 
 .footer-links .dot { opacity: 0.45; }
+
+.footer-links .footer-hash {
+  color: var(--gold);
+  font-weight: 700;
+}
 
 .footer-note { margin: 0; font-size: 0.8rem; color: #9fc0a7; }
 

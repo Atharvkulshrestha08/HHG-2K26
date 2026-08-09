@@ -229,7 +229,7 @@ const Themes = (function () {
       ctx.font = '500 15px ' + K.F.mono;
       ctx.fillStyle = W;
       ctx.textAlign = 'right';
-      ctx.fillText('2:47PM \u00b7 HH GOA 2026 \u00b7 RESIDENCY', W - 46, H - 36);
+      ctx.fillText('2:47PM \u00b7 HH GOA 2026 \u00b7 #FrameInGoa', W - 46, H - 36);
     }
   };
 
@@ -391,7 +391,7 @@ const Themes = (function () {
       ctx.fillStyle = Y;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
-      ctx.fillText('SHIP THINGS THAT MATTER \u00b7 HH GOA 2026', x0, H - 36);
+      ctx.fillText('SHIP THINGS THAT MATTER \u00b7 HH GOA 2026 \u00b7 #FrameInGoa', x0, H - 36);
       ctx.font = '500 16px ' + K.F.mono;
       ctx.fillStyle = W;
       ctx.textAlign = 'right';
@@ -502,7 +502,7 @@ const Themes = (function () {
       ctx.fillText('\u0917\u094B\u0935\u093E \u00b7 247 BUILDERS \u00b7 28\u201331 OCT 2026 \u00b7 hhgoa.com', W / 2, 700);
       ctx.fillStyle = Y;
       ctx.font = '500 16px ' + K.F.mono;
-      ctx.fillText('2:47PM.STUDIO', W / 2, 744);
+      ctx.fillText('2:47PM.STUDIO \u00b7 #FrameInGoa', W / 2, 744);
     }
   };
 
@@ -571,7 +571,7 @@ const Themes = (function () {
       ctx.fillText('2:47PM \u00b7 hhgoa.com', cx, 962);
       ctx.fillStyle = W;
       ctx.font = '500 ' + Math.round(H * 0.017) + 'px ' + K.F.mono;
-      ctx.fillText('28\u201331 OCT 2026 \u00b7 GOA, INDIA', cx, 1002);
+      ctx.fillText('28\u201331 OCT 2026 \u00b7 GOA, INDIA \u00b7 #FrameInGoa', cx, 1002);
 
       ctx.textAlign = 'left';
       ctx.fillStyle = W;
