@@ -189,8 +189,27 @@ const Kit = (function () {
   }
 
   function arcBottom(ctx, text, cx, cy, r, font, fill) {
-    var s = text.split('').reverse().join('');
-    arcText(ctx, s, cx, cy, r, Math.PI * 0.42, Math.PI * 0.58, font, fill);
+    ctx.save();
+    ctx.font = font;
+    ctx.fillStyle = fill;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var chars = text.split('');
+    var a0 = Math.PI * 0.76;
+    var a1 = Math.PI * 0.24;
+    var step = (a1 - a0) / Math.max(1, chars.length - 1);
+    var i, a, x, y;
+    for (i = 0; i < chars.length; i++) {
+      a = a0 + step * i;
+      x = cx + Math.cos(a) * r;
+      y = cy + Math.sin(a) * r;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(a - Math.PI / 2);
+      ctx.fillText(chars[i], 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
   }
 
   function wrap(ctx, text, x, y, maxW, lh, font, fill, align) {
@@ -592,12 +611,377 @@ const Kit = (function () {
     palm: palm,
     waves: waves,
     sun: sun,
-    squiggle: squiggle,
-    coconutSil: coconutSil,
-    churchSil: churchSil,
-    goaGradient: goaGradient,
+    goaGradient: function(ctx, W, H) {
+      ctx.fillStyle = '#0B5D3A';
+      ctx.fillRect(0, 0, W, H);
+    },
     goaSunset: goaSunset,
-    silhouette: silhouette
+    silhouette: function(ctx, x, y, w, h) {
+      ctx.save();
+      ctx.fillStyle = '#063822';
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = Math.max(2, w * 0.012);
+      var cw = w * 0.32, ch = h * 0.3, cx = x + w / 2, cy = y + h * 0.4;
+      ctx.fillStyle = P.gold;
+      ctx.beginPath();
+      ctx.arc(cx, cy, cw, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#031c11';
+      ctx.beginPath();
+      ctx.ellipse(cx, y + h * 0.98, w * 0.68, h * 0.3, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.stroke();
+      ctx.strokeStyle = P.gold;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, cw, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = '600 ' + Math.round(w * 0.085) + 'px ' + F.mono;
+      ctx.fillStyle = P.gold;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('YOUR PHOTO', cx, cy + ch + h * 0.05);
+      ctx.restore();
+    },
+    lotus: function(ctx, cx, cy, r, color) {
+      ctx.save();
+      ctx.strokeStyle = color || P.gold;
+      ctx.lineWidth = Math.max(2, r * 0.08);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.8, cy + r * 0.25);
+      ctx.quadraticCurveTo(cx, cy + r * 0.45, cx + r * 0.8, cy + r * 0.25);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + r * 0.2);
+      ctx.quadraticCurveTo(cx - r * 0.8, cy - r * 0.2, cx - r * 0.5, cy - r * 0.7);
+      ctx.quadraticCurveTo(cx - r * 0.1, cy - r * 0.4, cx, cy + r * 0.2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + r * 0.2);
+      ctx.quadraticCurveTo(cx + r * 0.8, cy - r * 0.2, cx + r * 0.5, cy - r * 0.7);
+      ctx.quadraticCurveTo(cx + r * 0.1, cy - r * 0.4, cx, cy + r * 0.2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + r * 0.2);
+      ctx.quadraticCurveTo(cx - r * 0.35, cy - r * 0.5, cx, cy - r * 0.9);
+      ctx.quadraticCurveTo(cx + r * 0.35, cy - r * 0.5, cx, cy + r * 0.2);
+      ctx.stroke();
+      ctx.restore();
+    },
+    codeBadge: function(ctx, x, y, w, h, bg, fg) {
+      ctx.save();
+      rr(ctx, x, y, w, h, 6);
+      ctx.fillStyle = bg || P.pink;
+      ctx.fill();
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = fg || P.white;
+      ctx.font = '700 ' + Math.round(h * 0.5) + 'px ' + F.mono;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('</>', x + w / 2, y + h / 2 + 1);
+      ctx.restore();
+    },
+    triangleDivider: function(ctx, x0, x1, y, color) {
+      ctx.save();
+      ctx.strokeStyle = color || P.gold;
+      ctx.fillStyle = color || P.gold;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
+      var step = 16, px;
+      for (px = x0 + 8; px < x1; px += step) {
+        ctx.beginPath();
+        ctx.moveTo(px - 3, y - 3);
+        ctx.lineTo(px + 3, y - 3);
+        ctx.lineTo(px, y + 2);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    },
+    verifiedSeal: function(ctx, cx, cy, r, text1, text2, colorOuter, colorInner) {
+      ctx.save();
+      var col1 = colorOuter || P.pink;
+      var col2 = colorInner || P.gold;
+      ctx.strokeStyle = col1;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.save();
+      ctx.strokeStyle = col1;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([2, 5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r - 5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      ctx.strokeStyle = col2;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([0.01, 7]);
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r - 12, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r - 15, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(8, 51, 31, 0.4)';
+      ctx.fill();
+      ctx.fillStyle = col2;
+      ctx.font = '600 13px ' + F.mono;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('VERIFIED', cx, cy - 24);
+      ctx.fillStyle = P.white;
+      ctx.font = '700 20px ' + F.serif;
+      ctx.fillText(text1, cx, cy);
+      ctx.fillStyle = col2;
+      ctx.font = '600 12px ' + F.mono;
+      ctx.fillText(text2, cx, cy + 24);
+      ctx.restore();
+    },
+    goaBeachScene: function(ctx, W, H) {
+      ctx.save();
+      
+      // 1. Sky / Green backdrop gradient
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+      skyGrad.addColorStop(0, '#041B14');
+      skyGrad.addColorStop(0.5, '#0A3A24');
+      skyGrad.addColorStop(0.85, '#0F5032');
+      skyGrad.addColorStop(1, '#18643F');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, W, H * 0.65);
+
+      // 2. Rising Sun
+      var sunX = W * 0.5, sunY = H * 0.62, sunR = 64;
+      ctx.save();
+      ctx.fillStyle = P.gold2;
+      ctx.shadowColor = P.gold;
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, sunR, Math.PI, 0);
+      ctx.fill();
+      ctx.restore();
+      
+      // Sun Rays
+      ctx.save();
+      ctx.strokeStyle = P.gold;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      var numRays = 11;
+      for (var i = 0; i < numRays; i++) {
+        var angle = Math.PI + (i / (numRays - 1)) * Math.PI;
+        var rStart = sunR + 10;
+        var rEnd = sunR + 32;
+        ctx.beginPath();
+        ctx.moveTo(sunX + Math.cos(angle) * rStart, sunY + Math.sin(angle) * rStart);
+        ctx.lineTo(sunX + Math.cos(angle) * rEnd, sunY + Math.sin(angle) * rEnd);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 3. Ocean / Sea
+      var seaY = H * 0.62;
+      var seaH = H * 0.28;
+      var seaGrad = ctx.createLinearGradient(0, seaY, 0, seaY + seaH);
+      seaGrad.addColorStop(0, '#105B3A');
+      seaGrad.addColorStop(0.4, '#1C744D');
+      seaGrad.addColorStop(1, '#054026');
+      ctx.fillStyle = seaGrad;
+      ctx.fillRect(0, seaY, W, seaH);
+
+      // Ocean Ripples / Waves
+      ctx.save();
+      ctx.strokeStyle = 'rgba(245, 213, 32, 0.25)';
+      ctx.lineWidth = 2;
+      for (var w = 0; w < 6; w++) {
+        var ry = seaY + 15 + w * 25;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.25, ry);
+        ctx.quadraticCurveTo(W * 0.5, ry + 6, W * 0.75, ry);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 4. Sand shore at the bottom-left
+      ctx.save();
+      ctx.fillStyle = '#D9A05B'; // Golden sand
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, H * 0.72);
+      ctx.bezierCurveTo(W * 0.15, H * 0.74, W * 0.35, H * 0.82, W * 0.42, H);
+      ctx.lineTo(0, H);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 5. Beach Shack on the left sand
+      var shX = 26, shY = H * 0.60, shW = 120, shH = 100;
+      ctx.save();
+      // Shack body
+      ctx.fillStyle = '#E8C595';
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 3.5;
+      ctx.fillRect(shX, shY + 30, shW, shH - 30);
+      ctx.strokeRect(shX, shY + 30, shW, shH - 30);
+
+      // Shack roof (pink)
+      ctx.fillStyle = P.pink;
+      ctx.beginPath();
+      ctx.moveTo(shX - 10, shY + 30);
+      ctx.lineTo(shX + shW / 2, shY);
+      ctx.lineTo(shX + shW + 10, shY + 30);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Door and windows
+      ctx.fillStyle = P.gold;
+      ctx.fillRect(shX + 16, shY + 54, 28, shH - 54);
+      ctx.strokeRect(shX + 16, shY + 54, 28, shH - 54);
+      ctx.fillStyle = '#063822';
+      ctx.fillRect(shX + 66, shY + 44, 34, 30);
+      ctx.strokeRect(shX + 66, shY + 44, 34, 30);
+      ctx.restore();
+
+      // 6. Two Surfboards standing on the sand
+      var sbY = H * 0.72;
+      ctx.save();
+      ctx.lineWidth = 3;
+      
+      // Board 1: Yellow
+      ctx.fillStyle = P.gold;
+      ctx.strokeStyle = P.black;
+      ctx.beginPath();
+      ctx.ellipse(172, sbY + 44, 12, 54, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Stripe
+      ctx.strokeStyle = P.white;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(172, sbY - 10);
+      ctx.lineTo(172, sbY + 98);
+      ctx.stroke();
+
+      // Board 2: Pink with flower ornaments
+      ctx.fillStyle = P.pink;
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(204, sbY + 50, 12, 54, 0.05, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 7. Palm Trees on the far left
+      ctx.save();
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      
+      // Left palm trunk
+      ctx.beginPath();
+      ctx.moveTo(12, H * 0.82);
+      ctx.quadraticCurveTo(34, H * 0.54, 18, H * 0.38);
+      ctx.stroke();
+      
+      // Right palm trunk
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(38, H * 0.82);
+      ctx.quadraticCurveTo(58, H * 0.58, 48, H * 0.44);
+      ctx.stroke();
+
+      // Palm fronds/leaves
+      function drawPalmLeaves(lx, ly, size) {
+        ctx.fillStyle = '#064A2B';
+        ctx.strokeStyle = P.black;
+        ctx.lineWidth = 2.5;
+        for (var l = 0; l < 6; l++) {
+          var ang = (l / 6) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.ellipse(lx + Math.cos(ang) * size * 0.5, ly + Math.sin(ang) * size * 0.5, size * 0.22, size * 0.5, ang, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+      drawPalmLeaves(18, H * 0.38, 54);
+      drawPalmLeaves(48, H * 0.44, 46);
+      ctx.restore();
+
+      // 8. Hibiscus Flowers & Tropical Leaves on the right
+      var flX = W - 148, flY = H * 0.70;
+      ctx.save();
+      // Leaves
+      ctx.fillStyle = '#0F5F38';
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(flX + 50, flY + 80, 48, 80, -0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(flX + 90, flY + 90, 40, 70, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Hibiscus Flowers (Pink petals, gold stamen)
+      function drawHibiscus(cx, cy, r) {
+        ctx.save();
+        ctx.fillStyle = P.pink;
+        ctx.strokeStyle = P.black;
+        ctx.lineWidth = 3;
+        for (var p = 0; p < 5; p++) {
+          var a = (p / 5) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(a) * r * 0.6, cy + Math.sin(a) * r * 0.6, r * 0.65, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        // Center yellow stamen
+        ctx.strokeStyle = P.gold;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + r * 0.8, cy - r * 0.8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + r * 0.8, cy - r * 0.8, 4, 0, Math.PI * 2);
+        ctx.fillStyle = P.gold2;
+        ctx.fill();
+        ctx.restore();
+      }
+      drawHibiscus(flX + 20, flY + 62, 28);
+      drawHibiscus(flX + 76, flY + 92, 24);
+      drawHibiscus(flX - 10, flY + 110, 22);
+      ctx.restore();
+
+      // Dark green ground at the absolute bottom
+      ctx.save();
+      ctx.fillStyle = '#041B14';
+      ctx.fillRect(0, H * 0.90, W, H * 0.10);
+      ctx.strokeStyle = P.black;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, H * 0.90);
+      ctx.lineTo(W, H * 0.90);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
+    }
   };
 })();
 

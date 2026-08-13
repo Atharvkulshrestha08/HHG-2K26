@@ -8,8 +8,14 @@ const Themes = (function () {
 
   // Cards use the sunset gradient only; the full scene (sun, palms, churches)
   // lives on the landing page hero instead.
-  function backdrop(ctx, W, H) {
-    K.goaGradient(ctx, W, H);
+  function backdrop(ctx, W, H, muteOpacity) {
+    K.goaBeachScene(ctx, W, H);
+    if (muteOpacity) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(11, 93, 58, ' + muteOpacity + ')';
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
   }
 
   function photoImg(state, i) {
@@ -121,115 +127,224 @@ const Themes = (function () {
   /* ---------------- BUILDER PASSPORT · forest + gold + pink ---------------- */
 
   var passport = {
-    w: 1240,
+    w: 800,
     h: 800,
     label: 'Builder Passport',
     draw: function (ctx, state) {
-      var W = 1240, H = 800;
+      var W = 800, H = 800;
       var img = photoImg(state, 0);
 
-      backdrop(ctx, W, H);
-      posterBorder(ctx, W, H, 14);
-
+      backdrop(ctx, W, H, 0.85);
+      
+      // Draw outer rounded gold boundary line (sleek and thin like reference)
       ctx.save();
-      ctx.globalAlpha = 0.055;
-      ctx.font = '700 250px ' + K.F.mono;
-      ctx.fillStyle = Y;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('2:47PM', W * 0.7, H * 0.52);
+      ctx.strokeStyle = K.P.gold;
+      ctx.lineWidth = 3;
+      K.rr(ctx, 16, 16, W - 32, H - 32, 24);
+      ctx.stroke();
+      
+      ctx.strokeStyle = 'rgba(245, 213, 32, 0.4)';
+      ctx.lineWidth = 1;
+      K.rr(ctx, 22, 22, W - 44, H - 44, 20);
+      ctx.stroke();
       ctx.restore();
 
-      var bx = 34, bw = 250;
-      ctx.fillStyle = G2;
-      ctx.fillRect(bx, bx, bw, H - bx * 2);
-      ctx.strokeStyle = B;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(bx, bx, bw, H - bx * 2);
-      K.dotBorder(ctx, bx + 8, bx + 8, bw - 16, H - bx * 2 - 16, 10, Y, 3, 16);
+      // Margins
+      var mx = 56;
 
-      var bcx = bx + bw / 2;
-      goaBadge(ctx, bcx, 148, 150, 54, '\u0917\u094B\u0935\u093E', 32);
-      K.flower(ctx, bcx - 118, 148, 14, RP);
-      K.flower(ctx, bcx + 118, 148, 14, RP);
-      K.crest(ctx, bcx, 318, 62, 'HACKER HOUSE', 'EST. 2026', Y, RP, G);
-
-      ctx.font = '600 18px ' + K.F.mono;
-      ctx.fillStyle = Y;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText('EDITION 2026', bcx, 414);
-      ctx.font = '500 17px ' + K.F.mono;
-      ctx.fillText('28\u201331 OCT', bcx, 464);
-      ctx.fillStyle = W;
-      ctx.fillText('GOA, INDIA', bcx, 504);
-
-      K.palm(ctx, bcx, 716, 84, Y);
-      ctx.font = '600 14px ' + K.F.mono;
-      ctx.fillStyle = W;
-      ctx.fillText('2:47PM.STUDIO', bcx, 746);
-
-      var x0 = bx + bw + 40;
-
-      cap(ctx, 'BUILDER PASSPORT', x0, 46, 15, Y);
-      ctx.font = '700 46px ' + K.F.serif;
-      ctx.fillStyle = Y;
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      ctx.fillText('Hacker House Goa 2026', x0, 74);
-      ctx.font = '600 18px ' + K.F.mono;
-      ctx.fillStyle = Y2;
-      ctx.textAlign = 'right';
-      ctx.fillText('HHG-247-' + docNo(state.name), W - 46, 60);
-
-      dotLine(ctx, x0, W - 46, 142, Y);
-
-      var px = x0, py = 168, pw = 280, ph = 396;
-      photoPanel(ctx, px, py, pw, ph, img);
-      ctx.fillStyle = GD;
-      ctx.fillRect(px + 8, py + ph - 54, pw - 16, 46);
-      ctx.fillStyle = Y;
-      ctx.font = '600 18px ' + K.F.mono;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('\u0917\u094B\u0935\u093E \u00b7 GOA 2026', px + pw / 2, py + ph - 31);
-
+      // Top Header Area
+      // 1. Dotted accent top left
       ctx.save();
-      ctx.translate(px + pw - 24, py + 82);
-      K.stamp(ctx, 0, 0, 58, 'HH GOA 2026', 'PASSED', Y);
+      ctx.fillStyle = K.P.gold;
+      ctx.font = '700 12px ' + K.F.mono;
+      ctx.fillText('...', mx, 45);
       ctx.restore();
 
-      var fx = px + pw + 50;
-      var fw = W - 46 - fx;
-      fieldRow(ctx, 'Name', state.name || 'Your Name', fx, 168, fw, { valueSize: 30, valueFill: W });
-      fieldRow(ctx, 'Builder class', state.classes[0] || 'Harbor Hacker', fx, 244, fw, { mono: true, valueSize: 26, valueFill: Y });
-      fieldRow(ctx, 'Stack / role', state.stack || 'Full-stack \u00b7 Mobile', fx, 320, fw, { mono: true, valueSize: 24, valueFill: W });
-      fieldRow(ctx, 'Handle', state.handle || '@yourhandle', fx, 396, fw, { mono: true, valueSize: 24, valueFill: W });
-      fieldRow(ctx, 'Issued', '28 OCT 2026 \u00b7 2:47PM', fx, 472, fw, { mono: true, valueSize: 24, valueFill: Y, line: false });
-
-      cap(ctx, "BUILDER'S MARK", x0, 568, 15, Y);
-      dotLine(ctx, x0, W - 46, 586, Y);
-      K.squiggle(ctx, x0 + 8, 581, W - 46 - x0 - 16, state.name || 'builder', Y);
-
-      K.fakeQR(ctx, x0, 616, 84, (state.name || 'x') + state.stack, Y);
-      ctx.font = '500 14px ' + K.F.mono;
-      ctx.fillStyle = W;
+      // 2. Main Title: "HACKER HOUSE" in gold serif
+      ctx.save();
+      ctx.font = '700 36px ' + K.F.serif;
+      ctx.fillStyle = K.P.gold;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText('hhgoa.com \u00b7 verified builder', x0 + 102, 626);
+      ctx.fillText('HACKER HOUSE', mx, 55);
+      ctx.restore();
 
-      K.stamp(ctx, W - 206, 664, 86, 'HH GOA 2026', 'BUILD', Y);
-      K.stamp(ctx, W - 116, 664, 86, 'HH GOA 2026', 'SHIP', Y);
-
-      ctx.font = '600 19px ' + K.F.mono;
-      ctx.fillStyle = Y;
+      // 3. Devnagari Goa badge under HACKER HOUSE
+      ctx.save();
+      ctx.fillStyle = K.P.pink;
+      ctx.font = '700 28px ' + K.F.serif;
       ctx.textAlign = 'left';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillText('SHIP THINGS THAT MATTER', x0, H - 36);
-      ctx.font = '500 15px ' + K.F.mono;
-      ctx.fillStyle = W;
+      ctx.textBaseline = 'top';
+      ctx.fillText('गोवा', mx, 96);
+      ctx.restore();
+
+      // 4. Subtitle line: "GOA, INDIA - OCT 28-31 - 2026"
+      ctx.save();
+      ctx.font = '600 12px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText('GOA, INDIA  -  OCT 28-31  -  2026', mx, 142);
+      ctx.restore();
+
+      // 5. Lotus logo on top right (aligned with mx)
+      K.lotus(ctx, W - mx - 30, 80, 26, K.P.gold);
+
+      // Yellow separator line
+      ctx.save();
+      ctx.strokeStyle = K.P.gold;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(mx, 168);
+      ctx.lineTo(W - mx, 168);
+      ctx.stroke();
+      ctx.restore();
+
+      // Left Side: Photo Frame
+      var px = mx, py = 196, pw = 240, ph = 240;
+      ctx.save();
+      K.rr(ctx, px, py, pw, ph, 16);
+      ctx.fillStyle = '#063822';
+      ctx.fill();
+      ctx.strokeStyle = K.P.gold;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.restore();
+
+      // Draw actual photo inside
+      ctx.save();
+      K.rr(ctx, px + 3, py + 3, pw - 6, ph - 6, 13);
+      ctx.clip();
+      putPhoto(ctx, img, px + 3, py + 3, pw - 6, ph - 6);
+      ctx.restore();
+
+      // Code tag badge overlaps photo bottom right
+      K.codeBadge(ctx, px + pw - 42, py + ph - 32, 42, 26, K.P.pink, K.P.white);
+      
+      // Right Side: Builder Details
+      var fx = px + pw + 40;
+      
+      // Builder Class Sub-label
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '600 11px ' + K.F.mono;
+      ctx.fillStyle = K.P.pink;
+      ctx.fillText('BUILDING TEST · BUILDER', fx, py + 10);
+      ctx.restore();
+
+      // Name (Serif bold in yellow, moved down to prevent overlap)
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '700 32px ' + K.F.serif;
+      ctx.fillStyle = K.P.gold;
+      ctx.fillText((state.name || 'Your Name').toUpperCase(), fx, py + 28);
+      ctx.restore();
+
+      // Stack text/role
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '600 11px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText((state.stack || 'FULL-STACK DEVELOPER - GOA, INDIA').toUpperCase(), fx, py + 78);
+      ctx.restore();
+
+      // Call sign pill badge
+      var pillW = 280, pillH = 34, pillX = fx, pillY = py + 104;
+      ctx.save();
+      K.rr(ctx, pillX, pillY, pillW, pillH, pillH / 2);
+      ctx.fillStyle = K.P.pink;
+      ctx.fill();
+      ctx.fillStyle = K.P.white;
+      ctx.font = '700 11px ' + K.F.mono;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var callSignText = 'CALL SIGN - ' + (state.classes[0] || 'Wave Rider');
+      ctx.fillText(callSignText.toUpperCase(), pillX + pillW / 2, pillY + pillH / 2 + 1);
+      ctx.restore();
+
+      // Details footer list (e.g. STACK details)
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '600 11px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText('STACK', fx, py + 158);
+      ctx.fillStyle = K.P.white;
+      var lines = [
+        'REACT · NODE.JS · TYPESCRIPT',
+        'TAILWINDCSS · RUST'
+      ];
+      if (state.stack) {
+        var parts = state.stack.toUpperCase().split(/[·,·|•]/);
+        if (parts.length > 0) {
+          lines[0] = parts.slice(0, 3).map(s => s.trim()).join(' · ');
+          lines[1] = parts.slice(3).map(s => s.trim()).join(' · ') || 'HH GOA · BUILDER';
+        }
+      }
+      ctx.fillText(lines[0], fx, py + 178);
+      ctx.fillText(lines[1], fx, py + 196);
+      ctx.restore();
+
+      // Middle Divider: Dashed/Triangle Line
+      K.triangleDivider(ctx, 0, W, 470, K.P.gold);
+
+      // Lower Section Details
+      var ly = 490;
+      
+      // Builder No details
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '600 11px ' + K.F.mono;
+      ctx.fillStyle = K.P.pink;
+      ctx.fillText('BUILDER NO.', mx, ly + 10);
+      
+      // Large builder fraction text
+      ctx.font = '700 32px ' + K.F.mono;
+      ctx.fillStyle = K.P.gold;
+      var bNo = docNo(state.name);
+      var bNoInt = (parseInt(bNo, 36) % 247) + 1;
+      ctx.fillText(bNoInt + '  /  247', mx, ly + 30);
+      ctx.restore();
+
+      // Barcode
+      K.barcode(ctx, mx, ly + 82, 180, 36, state.name || 'builder');
+      
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '600 10px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText('HHG - ' + docNo(state.name) + ' - TEST', mx, ly + 130);
+      ctx.restore();
+
+       // Verified Seal
+      K.verifiedSeal(ctx, W - mx - 70, ly + 70, 70, "GOA '26", "BUILDER PASS", K.P.pink, K.P.gold);
+
+      // Draw HND -> GOA flight route text in the open center area
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '700 38px ' + K.F.serif;
+      ctx.fillStyle = K.P.gold;
+      ctx.fillText('H N D  →  G O A', 400, ly + 92);
+      ctx.restore();
+
+      // Footer
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.font = '700 15px ' + K.F.mono;
+      ctx.fillStyle = K.P.pink;
+      ctx.fillText('#FrameInGoa', mx, H - 65);
+      
+      ctx.font = '600 10px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText('BUILD · SHIP · GOA', mx, H - 45);
+
       ctx.textAlign = 'right';
-      ctx.fillText('2:47PM \u00b7 HH GOA 2026 \u00b7 #FrameInGoa', W - 46, H - 36);
+      ctx.font = '700 15px ' + K.F.sans;
+      ctx.fillStyle = K.P.gold;
+      ctx.fillText('BUILD IN PARADISE', W - mx, H - 65);
+      
+      ctx.font = '600 10px ' + K.F.mono;
+      ctx.fillStyle = K.P.sage;
+      ctx.fillText('HH GOA - 2026', W - mx, H - 45);
+      ctx.restore();
     }
   };
 
@@ -243,7 +358,7 @@ const Themes = (function () {
       var W = 1240, H = 800;
       var img = photoImg(state, 0);
 
-      backdrop(ctx, W, H);
+      backdrop(ctx, W, H, 0.85);
       posterBorder(ctx, W, H, 14);
 
       var band = 330;
@@ -408,7 +523,7 @@ const Themes = (function () {
     draw: function (ctx, state) {
       var W = 1240, H = 800;
 
-      backdrop(ctx, W, H);
+      backdrop(ctx, W, H, 0.82);
       posterBorder(ctx, W, H, 14);
 
       ctx.font = '700 60px ' + K.F.serif;
@@ -516,18 +631,24 @@ const Themes = (function () {
       var W = 1080, H = 1080;
       var cx = W / 2, cy = 505, r = 310;
 
-      backdrop(ctx, W, H);
+      backdrop(ctx, W, H, 0.85);
       posterBorder(ctx, W, H, 10);
 
+      // Draw mandala/flower decorations in corners offset to prevent overlap
       K.mandala(ctx, 118, 118, 44, Y);
       K.mandala(ctx, W - 118, 118, 44, Y);
       K.mandala(ctx, 118, H - 118, 44, Y);
       K.mandala(ctx, W - 118, H - 118, 44, Y);
-      K.flower(ctx, W - 168, 168, 15, RP);
-      K.flower(ctx, 168, H - 168, 15, RP);
+      
+      // Secondary flower ornaments
+      K.flower(ctx, W - 180, 180, 15, RP);
+      K.flower(ctx, 180, H - 180, 15, RP);
 
-      K.sun(ctx, 140, 168, 42, Y);
-      K.palm(ctx, W - 86, 176, 78, Y);
+      // Cleaned decorative top corner details
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      K.palm(ctx, W - 120, 220, 80, Y);
+      ctx.restore();
 
       ctx.save();
       ctx.beginPath();
