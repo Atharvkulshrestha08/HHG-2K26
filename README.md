@@ -1,3 +1,9 @@
+> ### 🛡️ Author & Original Creator
+> **Atharv Kulshrestha** — [@Atharvkulshrestha08](https://github.com/Atharvkulshrestha08)  
+> *This repository and its codebase are the original work of Atharv Kulshrestha. All rights reserved.*
+
+---
+
 # HH Goa 2026 — Frame & ID Card Generator
 
 A client-side web tool for Hacker House Goa 2026 Task 1. Upload a photo, pick a
